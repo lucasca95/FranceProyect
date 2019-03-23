@@ -1,0 +1,15 @@
+accommodation 600-800 euros x mes
+transporte 350 euros x 9 meses 
+internet 20-50 euros x mes
+
+1er semestre septiembre- (inscripcion en mayo)
+2do semestre
+international-relations@gmail.com
+
+workshop url:
+http://bit.ly/2Cvdxd7
+
+IDE:
+https://code.visualstudio.com
+
+Para probar nuestro código desde el mismo IDE vamos a Terminal y ejecutamos "py nombreArchivo.py"
