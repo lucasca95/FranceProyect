@@ -161,16 +161,16 @@ class Game:
                 mov = True
         return mov
 
-    def canMoveIA(self, direction):
+    def canMoveIA(self):
         # direction values: 1 is up, 2 is right, 3 is down, 4 is left
         mov = 0
-        if (self.p.getYPos()-1 >= 0) and (self.m.maze[self.p.getYPos()-1][self.p.getXPos()] != 1) and self.m.isVisitedCell(self.p.getXPos(), self.p.getYPos()-1):
+        if (self.p.getYPos()-1 >= 0) and (self.m.maze[self.p.getYPos()-1][self.p.getXPos()] != 1) and (self.m.isVisitedCell(self.p.getXPos(), self.p.getYPos()-1) == 0):
             mov = 1
-        if (self.p.getYPos()+1 < self.limit) and (self.m.maze[self.p.getYPos()+1][self.p.getXPos()] != 1) and self.m.isVisitedCell(self.p.getXPos(), self.p.getYPos()+1):
+        if (self.p.getYPos()+1 < self.limit) and (self.m.maze[self.p.getYPos()+1][self.p.getXPos()] != 1) and (self.m.isVisitedCell(self.p.getXPos(), self.p.getYPos()+1) == 0):
             mov = 3
-        if (self.p.getXPos()+1 <= self.limit) and (self.m.maze[self.p.getYPos()][self.p.getXPos()+1] != 1) and self.m.isVisitedCell(self.p.getXPos()+1, self.p.getYPos()):
+        if (self.p.getXPos()+1 <= self.limit) and (self.m.maze[self.p.getYPos()][self.p.getXPos()+1] != 1) and (self.m.isVisitedCell(self.p.getXPos()+1, self.p.getYPos()) == 0):
             mov = 2
-        if (self.p.getXPos()-1 > 0) and (self.m.maze[self.p.getYPos()][self.p.getXPos()-1] != 1) and self.m.isVisitedCell(self.p.getXPos()-1, self.p.getYPos()):
+        if (self.p.getXPos()-1 > 0) and (self.m.maze[self.p.getYPos()][self.p.getXPos()-1] != 1) and (self.m.isVisitedCell(self.p.getXPos()-1, self.p.getYPos()) == 0):
             mov = 4
         return mov
 
@@ -202,11 +202,28 @@ class Game:
     def autoPlay(self):
         win = 0
         while (win == 0):
-
-            while self.canMoveIA()
-            # autoplay
-            pass
-
+            direction = self.canMoveIA()
+            system('cls')
+            while (direction != 0):
+                if (direction == 1):
+                    self.p.moveUp()
+                if (direction == 2):
+                    self.p.moveRight()
+                    if(self.m.gameOver(self.p)):
+                        win = 1
+                        system('cls')
+                        print("YOU WIN!")
+                if (direction == 3):
+                    self.p.moveDown()
+                if (direction == 4):
+                    self.p.moveLeft()
+                self.m.printMaze(self.p)
+                direction = self.canMoveIA()
+                t=input()
+                print(direction)
+            
+            print("Nos la pusimos")
+            t=input()
 
 print("Press ENTER to start")
 t = input()
