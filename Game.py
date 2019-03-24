@@ -1,4 +1,5 @@
 import msvcrt
+import time
 from os import system, name
 
 
@@ -122,14 +123,15 @@ class Maze:
         cell["y"] = y
         self.pathTakenCells.append(cell)
 
-    def popVisitedCell(self):
-        return self.visitedCells.pop()
+    def popPathTakenCell(self):
+        return self.pathTakenCells.pop()
 
     def isVisitedCell(self, x, y):
         isVisited = False
         for c in self.visitedCells:
             if ((c["x"] == x) and (c["y"] == y)):
                 isVisited = True
+                break
         return isVisited
 
 
@@ -164,13 +166,16 @@ class Game:
     def canMoveIA(self):
         # direction values: 1 is up, 2 is right, 3 is down, 4 is left
         mov = 0
-        if (self.p.getYPos()-1 >= 0) and (self.m.maze[self.p.getYPos()-1][self.p.getXPos()] != 1) and (self.m.isVisitedCell(self.p.getXPos(), self.p.getYPos()-1) == 0):
+        xPos = self.p.getXPos()
+        yPos = self.p.getYPos()
+
+        if (yPos-1 >= 0) and (self.m.maze[yPos-1][xPos] != 1) and (self.m.isVisitedCell(xPos, yPos-1) == 0):
             mov = 1
-        if (self.p.getYPos()+1 < self.limit) and (self.m.maze[self.p.getYPos()+1][self.p.getXPos()] != 1) and (self.m.isVisitedCell(self.p.getXPos(), self.p.getYPos()+1) == 0):
-            mov = 3
-        if (self.p.getXPos()+1 <= self.limit) and (self.m.maze[self.p.getYPos()][self.p.getXPos()+1] != 1) and (self.m.isVisitedCell(self.p.getXPos()+1, self.p.getYPos()) == 0):
+        elif (xPos+1 <= self.limit) and (self.m.maze[yPos][xPos+1] != 1) and (self.m.isVisitedCell(xPos+1, yPos) == 0):
             mov = 2
-        if (self.p.getXPos()-1 > 0) and (self.m.maze[self.p.getYPos()][self.p.getXPos()-1] != 1) and (self.m.isVisitedCell(self.p.getXPos()-1, self.p.getYPos()) == 0):
+        elif (yPos+1 < self.limit) and (self.m.maze[yPos+1][xPos] != 1) and (self.m.isVisitedCell(xPos, yPos+1) == 0):
+            mov = 3
+        elif (xPos-1 > 0) and (self.m.maze[yPos][xPos-1] != 1) and (self.m.isVisitedCell(xPos-1, yPos) == 0):
             mov = 4
         return mov
 
@@ -203,27 +208,52 @@ class Game:
         win = 0
         while (win == 0):
             direction = self.canMoveIA()
-            system('cls')
+            # system('cls')
+            print(" ")
+            self.m.addVisitedCell(self.p.getXPos(), self.p.getYPos())
+            self.m.addPathTakenCell(self.p.getXPos(), self.p.getYPos())
             while (direction != 0):
+                # Register cell
+                xPos = self.p.getXPos()
+                yPos = self.p.getYPos()
+                # self.m.addVisitedCell(xPos, yPos)
+                # self.m.addPathTakenCell(xPos, yPos)
+
                 if (direction == 1):
                     self.p.moveUp()
-                if (direction == 2):
+                elif (direction == 2):
                     self.p.moveRight()
                     if(self.m.gameOver(self.p)):
                         win = 1
                         system('cls')
                         print("YOU WIN!")
-                if (direction == 3):
+                elif (direction == 3):
                     self.p.moveDown()
-                if (direction == 4):
+                else:
                     self.p.moveLeft()
+                
+                self.m.addVisitedCell(xPos, yPos)
+                self.m.addPathTakenCell(xPos, yPos)
+
                 self.m.printMaze(self.p)
                 direction = self.canMoveIA()
-                t=input()
-                print(direction)
-            
-            print("Nos la pusimos")
+                
+                # time.sleep(0.5)
+
+            print("Pared")
             t=input()
+
+            # pop cell from pathTakenCells (useless cells)
+            self.m.popPathTakenCell()
+
+            while ((direction == 0) and (win==0)):
+                cell = self.m.popPathTakenCell()
+                self.p.setPos(cell["x"], cell["y"])
+                self.m.printMaze(self.p)
+                direction = self.canMoveIA()
+                # cell = self.m.popPathTakenCell()
+                time.sleep(1.2)
+
 
 print("Press ENTER to start")
 t = input()
